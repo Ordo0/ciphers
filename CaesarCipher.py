@@ -5,6 +5,7 @@ class CaesarCipher:
 
     def encode(self, message):
         encoded_message = ""
+        message = message.lower()
         for char in message:
             if char in self.alphabet:
                 char_index = self.alphabet.index(char)
