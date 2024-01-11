@@ -2,6 +2,7 @@ from AlphabetGenerator import AlphabetGenerator
 from Base64Cipher import Base64Cipher
 from CaesarCipher import CaesarCipher
 from ReverseCipher import ReverseCipher
+from Huffman import encode_message, decode_message
 
 if __name__ == '__main__':
     # Пример использования программы
@@ -32,3 +33,8 @@ if __name__ == '__main__':
     print("Декодированное сообщение (обратный шифр):", decoded_message_reverse)
     print("Закодированное сообщение (Base64):", encoded_message_base64)
     print("Декодированное сообщение (Base64):", decoded_message_base64)
+
+    encoded_message, codes = encode_message(message)
+    print("Encoded message:", encoded_message)
+    decoded_message = decode_message(encoded_message, codes)
+    print("Decoded message:", decoded_message)
