@@ -2,7 +2,6 @@ from heapq import heappush, heappop, heapify
 from collections import defaultdict
 
 
-# Создание узла дерева
 class Node:
     def __init__(self, char, freq, left=None, right=None):
         self.char = char
@@ -11,54 +10,60 @@ class Node:
         self.right = right
 
 
-# Функция для кодирования сообщения
-def encode_message(message):
-    # Подсчет частоты встречаемости символов в сообщении
-    frequency = defaultdict(int)
-    for char in message:
-        frequency[char] += 1
+class HuffmanTree:
+    def __init__(self, message):
+        self.frequency = self.calculate_frequency(message)
+        self.root = self.build_tree()
 
-    # Создание очереди приоритетов для узлов дерева
-    priority_queue = []
-    counter = 0
-    for char, freq in frequency.items():
-        heappush(priority_queue, (freq, counter, Node(char, freq)))
-        counter += 1
+    def calculate_frequency(self, message):
+        frequency = defaultdict(int)
+        for char in message:
+            frequency[char] += 1
+        return frequency
 
-    # Строим дерево Хаффмана
-    while len(priority_queue) > 1:
-        freq1, _, node1 = heappop(priority_queue)
-        freq2, _, node2 = heappop(priority_queue)
-        heappush(priority_queue, (freq1 + freq2, counter, Node(None, freq1 + freq2, node1, node2)))
-        counter += 1
+    def build_tree(self):
+        priority_queue = []
+        counter = 0
+        for char, freq in self.frequency.items():
+            heappush(priority_queue, (freq, counter, Node(char, freq)))
+            counter += 1
 
-    # Получение кодов символов с помощью обхода дерева
-    codes = {}
+        while len(priority_queue) > 1:
+            freq1, _, node1 = heappop(priority_queue)
+            freq2, _, node2 = heappop(priority_queue)
+            heappush(priority_queue, (freq1 + freq2, counter, Node(None, freq1 + freq2, node1, node2)))
+            counter += 1
+        return priority_queue[0][2]
 
-    def get_codes(node, code):
+
+class HuffmanCoding:
+    def __init__(self, huffman_tree):
+        self.tree = huffman_tree
+        self.codes = self.get_codes()
+
+    def get_codes(self):
+        codes = {}
+        self.build_codes(self.tree.root, '', codes)
+        return codes
+
+    @staticmethod
+    def build_codes(node, code, codes):
         if node.char is not None:
             codes[node.char] = code
         else:
-            get_codes(node.left, code + '0')
-            get_codes(node.right, code + '1')
+            HuffmanCoding.build_codes(node.left, code + '0', codes)
+            HuffmanCoding.build_codes(node.right, code + '1', codes)
 
-    root = priority_queue[0][2]
-    get_codes(root, '')
 
-    # Кодирование сообщения
+def encode_message(message, codes):
     encoded_message = ''
     for char in message:
         encoded_message += codes[char]
+    return encoded_message
 
-    return encoded_message, codes
 
-
-# Функция для декодирования сообщения
 def decode_message(encoded_message, codes):
-    # Создание обратного словаря кодов символов
     reversed_codes = {v: k for k, v in codes.items()}
-
-    # Декодирование сообщения
     decoded_message = ''
     code = ''
     for bit in encoded_message:
@@ -66,5 +71,4 @@ def decode_message(encoded_message, codes):
         if code in reversed_codes:
             decoded_message += reversed_codes[code]
             code = ''
-
     return decoded_message

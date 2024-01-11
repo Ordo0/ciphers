@@ -2,7 +2,7 @@ from AlphabetGenerator import AlphabetGenerator
 from Base64Cipher import Base64Cipher
 from CaesarCipher import CaesarCipher
 from ReverseCipher import ReverseCipher
-from Huffman import encode_message, decode_message
+from Huffman import encode_message, decode_message, HuffmanTree, HuffmanCoding
 
 if __name__ == '__main__':
     # Пример использования программы
@@ -34,7 +34,18 @@ if __name__ == '__main__':
     print("Закодированное сообщение (Base64):", encoded_message_base64)
     print("Декодированное сообщение (Base64):", decoded_message_base64)
 
-    encoded_message, codes = encode_message(message)
-    print("Encoded message:", encoded_message)
-    decoded_message = decode_message(encoded_message, codes)
-    print("Decoded message:", decoded_message)
+    # Строим дерево Хаффмана
+    huffman_tree = HuffmanTree(message)
+
+    # Получаем коды Хаффмана
+    huffman_coding = HuffmanCoding(huffman_tree)
+
+    print(f"Huffman Codes: {huffman_coding.codes}")
+
+    # Кодируем сообщение
+    encoded_message = encode_message(message, huffman_coding.codes)
+    print(f"Encoded message: {encoded_message}")
+
+    # Декодируем сообщение
+    decoded_message = decode_message(encoded_message, huffman_coding.codes)
+    print(f"Decoded message: {decoded_message}")
