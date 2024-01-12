@@ -36,7 +36,16 @@ class HuffmanTree:
         return priority_queue[0][2]
 
 
-class HuffmanCoding:
+class BuilderCodes:
+    def build_codes(self, node, code, codes) -> None:
+        if node.char is not None:
+            codes[node.char] = code
+        else:
+            self.build_codes(node.left, code + '0', codes)
+            self.build_codes(node.right, code + '1', codes)
+
+
+class HuffmanCoding(BuilderCodes):
     def __init__(self, huffman_tree):
         self.tree = huffman_tree
         self.codes = self.get_codes()
@@ -45,14 +54,6 @@ class HuffmanCoding:
         codes = {}
         self.build_codes(self.tree.root, '', codes)
         return codes
-
-    @staticmethod
-    def build_codes(node, code, codes):
-        if node.char is not None:
-            codes[node.char] = code
-        else:
-            HuffmanCoding.build_codes(node.left, code + '0', codes)
-            HuffmanCoding.build_codes(node.right, code + '1', codes)
 
 
 def encode_message(message, codes):
